@@ -71,6 +71,7 @@
 				// 删除''的元素
 				if(ids[0]==''){
 					ids.shift();
+					pre_ids.shift();
 				}
 				if(pre_ids.sort().toString() == ids.sort().toString()){
 					top.$.jBox.tip("未给角色【${role.name}】分配新成员！", 'info');
@@ -85,10 +86,10 @@
 				    	for (var i = 0; i<ids.length; i++) {
 				    		idsArr = (idsArr + ids[i]) + (((i + 1)== ids.length) ? '':',');
 				    	}
-				    	var postForm = document.createElement("form");//表单对象 
+				    	var postForm = document.createElement("form");
 				    	postForm.method="post" ; 
 				    	postForm.action="${ctx}/sys/role/assignrole?roleId=${role.id}&idsArr="+idsArr;
-				    	postForm.submit() ; 
+				    	postForm.submit();
 				    	//top.$.jBox("post:${ctx}/sys/role/assignrole?roleId=${role.id}&idsArr="+idsArr);
 				    	return true;
 				    } else if (v == 'cancel'){
@@ -97,7 +98,7 @@
 				    };
 				};
 				
-				var tips="确定分配【"+ ids.length +"个】用户到角色【${role.name}】？";
+				var tips="新增【"+ (ids.length-pre_ids.length) +"个】用户到角色【${role.name}】？";
 				if(ids.length==0){
 					tips="确定清空角色【${role.name}】下的所有人员？";
 				}
