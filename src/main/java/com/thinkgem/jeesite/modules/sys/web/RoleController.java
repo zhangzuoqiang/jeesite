@@ -174,6 +174,7 @@ public class RoleController extends BaseController {
 				newNum++;
 			}
 		}
+		redirectAttributes.addFlashAttribute(role);
 		addMessage(redirectAttributes, "已成功分配 "+newNum+" 个用户"+msg);
 		return "redirect:"+Global.ADMIN_PATH+"/sys/role/assign";
 	}
