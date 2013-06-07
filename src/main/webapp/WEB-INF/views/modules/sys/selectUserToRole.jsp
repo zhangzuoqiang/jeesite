@@ -88,9 +88,8 @@
 				    	}
 				    	var postForm = document.createElement("form");
 				    	postForm.method="post" ; 
-				    	postForm.action="${ctx}/sys/role/assignrole?roleId=${role.id}&idsArr="+idsArr;
+				    	postForm.action="${ctx}/sys/role/assignrole?id=${role.id}&idsArr="+idsArr;
 				    	postForm.submit();
-				    	//top.$.jBox("post:${ctx}/sys/role/assignrole?roleId=${role.id}&idsArr="+idsArr);
 				    	return true;
 				    } else if (v == 'cancel'){
 				    	// 取消

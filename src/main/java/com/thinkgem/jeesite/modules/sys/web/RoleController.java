@@ -164,9 +164,8 @@ public class RoleController extends BaseController {
 	
 	@RequiresPermissions("sys:role:edit")
 	@RequestMapping(value = "assignrole")
-	public String assignRole(Long roleId, Long[] idsArr, Model model, RedirectAttributes redirectAttributes) {
+	public String assignRole(Role role, Long[] idsArr, RedirectAttributes redirectAttributes) {
 		StringBuilder msg = new StringBuilder();
-		Role role = systemService.getRole(roleId);
 		int newNum = 0;
 		for (int i = 0; i < idsArr.length; i++) {
 			User user = systemService.assignUserToRole(role, idsArr[i]);
