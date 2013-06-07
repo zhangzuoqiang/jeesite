@@ -17,7 +17,7 @@
 			selectedTree = $.fn.zTree.init($("#selectedTree"), setting, selectedNodes);
 		});
 
-		var setting = {view: {selectedMulti:false,nameIsHTML:true},
+		var setting = {view: {selectedMulti:false,nameIsHTML:true,showTitle:false},
 				data: {simpleData: {enable: true}},
 				callback: {onClick: treeOnClick}};
 		
