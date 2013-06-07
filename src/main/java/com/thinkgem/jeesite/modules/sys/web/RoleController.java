@@ -120,6 +120,7 @@ public class RoleController extends BaseController {
 	@RequiresPermissions("sys:role:view")
 	@RequestMapping(value = "usertorole")
 	public String selectUserToRole(Role role, Model model) {
+		model.addAttribute("role", role);
 		model.addAttribute("selectIds", role.getUserIds());
 		model.addAttribute("selectedList", role.getUserList());
 		model.addAttribute("officeList", officeService.findAll());
@@ -139,7 +140,7 @@ public class RoleController extends BaseController {
 			map.put("id", user.getId());
 			map.put("pId", 0);
 			map.put("name", user.getName());
-			mapList.add(map);			
+			mapList.add(map);
 		}
 		return mapList;
 	}
@@ -147,13 +148,13 @@ public class RoleController extends BaseController {
 	@RequiresPermissions("sys:role:edit")
 	@RequestMapping(value = "outrole")
 	public String outrole(Long userId, Long roleId, Model model) {
+		Role role = systemService.getRole(roleId);
 		User user = systemService.getUser(userId);
-		systemService.outUserInRole(user, roleId);
+		systemService.outUserInRole(role, userId);
 		// 清除当前用户缓存
 		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
 			UserUtils.getCacheMap().clear();
 		}
-		Role role = systemService.getRole(roleId);
 		List<User> users = role.getUserList();
 		addMessage(model, "用户[" + user.getName() + "]从角色[" + role.getName() + "]中移除成功！");
 		model.addAttribute("role", role);
@@ -163,10 +164,19 @@ public class RoleController extends BaseController {
 	
 	@RequiresPermissions("sys:role:edit")
 	@RequestMapping(value = "assignrole")
-	public String assignRole(Role role, String[] usrIds, Model model) {
-		
-		//addMessage(model, "用户[" + user.getName() + "]添加成功添加到角色[" + role.getName() + "]");
-		return "modules/sys/roleAssign";
+	public String assignRole(Long roleId, Long[] idsArr, Model model, RedirectAttributes redirectAttributes) {
+		StringBuilder msg = new StringBuilder();
+		Role role = systemService.getRole(roleId);
+		int newNum = 0;
+		for (int i = 0; i < idsArr.length; i++) {
+			User user = systemService.assignUserToRole(role, idsArr[i]);
+			if (null != user) {
+				msg.append("<br/>新增用户【" + user.getName() + "】到角色【" + role.getName() + "】！");
+				newNum++;
+			}
+		}
+		addMessage(redirectAttributes, "已成功分配 "+newNum+" 个用户"+msg);
+		return "redirect:"+Global.ADMIN_PATH+"/sys/role/assign";
 	}
 
 	@RequiresUser

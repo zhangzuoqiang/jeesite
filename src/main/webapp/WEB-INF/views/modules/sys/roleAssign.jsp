@@ -27,18 +27,9 @@
 		<script type="text/javascript">
 			$("#assignButton").click(function(){
 				top.$.jBox.open("iframe:${ctx}/sys/role/usertorole?id=${role.id}", "分配角色",810,$(top.document).height()-240,{
-					buttons:{"确定分配":"ok", "关闭":true}, submit:function(v, h, f){
-	                	var selectedTree = h.find("iframe")[0].contentWindow.selectedTree;
-		                if (v=="ok"){
-		                	// 判断当前角色是否有改变
-		                	// 无改变直接返回
-		                	// 有改变执行保存
-		                	alert(selectedTree.getNodes().length);
-		                }
-		            }, loaded:function(h){
+					buttons:{"关闭":true}, bottomText:"通过选择部门，然后为列出的人员分配角色。",
+					loaded:function(h){
 						$(".jbox-content", top.document).css("overflow-y","hidden");
-						$(".nav,.form-actions,[class=btn]", h.find("iframe").contents()).hide();
-						$("body", h.find("iframe").contents()).css("margin","10px");
 					}
 				});
 			});
