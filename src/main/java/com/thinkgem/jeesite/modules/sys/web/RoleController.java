@@ -8,7 +8,6 @@ package com.thinkgem.jeesite.modules.sys.web;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -111,7 +110,7 @@ public class RoleController extends BaseController {
 	}	
 	@RequiresPermissions("sys:role:edit")
 	@RequestMapping(value = "assign")
-	public String assign(Role role, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String assign(Role role, Model model) {
 		List<User> users = role.getUserList();
 		model.addAttribute("users", users);
 		return "modules/sys/roleAssign";
@@ -122,7 +121,6 @@ public class RoleController extends BaseController {
 	public String selectUserToRole(Role role, Model model) {
 		model.addAttribute("role", role);
 		model.addAttribute("selectIds", role.getUserIds());
-		model.addAttribute("selectedList", role.getUserList());
 		model.addAttribute("officeList", officeService.findAll());
 		return "modules/sys/selectUserToRole";
 	}
@@ -151,10 +149,6 @@ public class RoleController extends BaseController {
 		Role role = systemService.getRole(roleId);
 		User user = systemService.getUser(userId);
 		systemService.outUserInRole(role, userId);
-		// 清除当前用户缓存
-		if (user.getLoginName().equals(UserUtils.getUser().getLoginName())){
-			UserUtils.getCacheMap().clear();
-		}
 		List<User> users = role.getUserList();
 		addMessage(model, "用户[" + user.getName() + "]从角色[" + role.getName() + "]中移除成功！");
 		model.addAttribute("role", role);
@@ -174,9 +168,8 @@ public class RoleController extends BaseController {
 				newNum++;
 			}
 		}
-		redirectAttributes.addFlashAttribute(role);
 		addMessage(redirectAttributes, "已成功分配 "+newNum+" 个用户"+msg);
-		return "redirect:"+Global.ADMIN_PATH+"/sys/role/assign";
+		return "redirect:"+Global.ADMIN_PATH+"/sys/role/assign?id="+role.getId();
 	}
 
 	@RequiresUser

@@ -29,14 +29,14 @@
 	            </c:forEach>];
 	
 		var pre_selectedNodes =[
-   		        <c:forEach items="${selectedList}" var="user">
+   		        <c:forEach items="${role.userList}" var="user">
    		        {id:"${user.id}",
    		         pId:"0",
    		         name:"<font color='red' style='font-weight:bold;'>${user.name}</font>"},
    		        </c:forEach>];
 		
 		var selectedNodes =[
-		        <c:forEach items="${selectedList}" var="user">
+		        <c:forEach items="${role.userList}" var="user">
 		        {id:"${user.id}",
 		         pId:"0",
 		         name:"<font color='red' style='font-weight:bold;'>${user.name}</font>"},
@@ -61,70 +61,70 @@
 				}
 			};
 		};
+		
+		function okAssign(){
+			// 删除''的元素
+			if(ids[0]==''){
+				ids.shift();
+				pre_ids.shift();
+			}
+			if(pre_ids.sort().toString() == ids.sort().toString()){
+				top.$.jBox.tip("未给角色【${role.name}】分配新成员！", 'info');
+				return;
+			};
+			
+			// 要修改的地方！！！
+			var submit = function (v, h, f) {
+			    if (v == 'ok'){
+			    	// 执行保存
+			    	var idsArr = "";
+			    	for (var i = 0; i<ids.length; i++) {
+			    		idsArr = (idsArr + ids[i]) + (((i + 1)== ids.length) ? '':',');
+			    	}
+			    	var postForm = document.createElement("form");
+			    	postForm.method="post" ; 
+			    	postForm.action="${ctx}/sys/role/assignrole?id=${role.id}&idsArr="+idsArr;
+			    	postForm.submit();
+			    	return true;
+			    } else if (v == 'cancel'){
+			    	// 取消
+			    	top.$.jBox.tip("取消分配操作！", 'info');
+			    };
+			};
+			
+			var tips="新增【"+ (ids.length-pre_ids.length) +"个】用户到角色【${role.name}】？";
+			if(ids.length==0){
+				tips="确定清空角色【${role.name}】下的所有人员？";
+			}
+			
+			top.$.jBox.confirm(tips, "分配确认", submit);
+		};
+		
+		function clearAssign(){
+			var submit = function (v, h, f) {
+			    if (v == 'ok'){
+					var tips="";
+					if(pre_ids.sort().toString() == ids.sort().toString()){
+						tips = "未给角色【${role.name}】分配新成员！";
+					}else{
+						tips = "已选人员清除成功！";
+					}
+					ids=pre_ids.slice(0);
+					selectedNodes=pre_selectedNodes;
+					$.fn.zTree.init($("#selectedTree"), setting, selectedNodes);
+			    	top.$.jBox.tip(tips, 'info');
+			    } else if (v == 'cancel'){
+			    	// 取消
+			    	top.$.jBox.tip("取消清除操作！", 'info');
+			    }
+			    return true;
+			};
+			tips="确定清除角色【${role.name}】下的已选人员？";
+			top.$.jBox.confirm(tips, "清除确认", submit);
+		};
 	</script>
 </head>
 <body>
-	<div class="breadcrumb">
-		<a id="assignButton" href="javascript:" class="btn btn-primary">确认分配</a>
-		<script type="text/javascript">
-			$("#assignButton").click(function(){
-				// 删除''的元素
-				if(ids[0]==''){
-					ids.shift();
-					pre_ids.shift();
-				}
-				if(pre_ids.sort().toString() == ids.sort().toString()){
-					top.$.jBox.tip("未给角色【${role.name}】分配新成员！", 'info');
-					return;
-				};
-				
-				// 要修改的地方！！！
-				var submit = function (v, h, f) {
-				    if (v == 'ok'){
-				    	// 执行保存
-				    	var idsArr = "";
-				    	for (var i = 0; i<ids.length; i++) {
-				    		idsArr = (idsArr + ids[i]) + (((i + 1)== ids.length) ? '':',');
-				    	}
-				    	var postForm = document.createElement("form");
-				    	postForm.method="post" ; 
-				    	postForm.action="${ctx}/sys/role/assignrole?id=${role.id}&idsArr="+idsArr;
-				    	postForm.submit();
-				    	return true;
-				    } else if (v == 'cancel'){
-				    	// 取消
-				    	top.$.jBox.tip("取消分配操作！", 'info');
-				    };
-				};
-				
-				var tips="新增【"+ (ids.length-pre_ids.length) +"个】用户到角色【${role.name}】？";
-				if(ids.length==0){
-					tips="确定清空角色【${role.name}】下的所有人员？";
-				}
-				
-				top.$.jBox.confirm(tips, "分配确认", submit);
-			});
-		</script>
-		<a id="clearButton" href="javascript:" class="btn">清除已选</a>
-		<script type="text/javascript">
-			$("#clearButton").click(function(){
-				var submit = function (v, h, f) {
-				    if (v == 'ok'){
-						ids=pre_ids.slice(0);
-						selectedNodes=pre_selectedNodes;
-						$.fn.zTree.init($("#selectedTree"), setting, selectedNodes);
-				    	top.$.jBox.tip("角色【${role.name}】清除成功！", 'info');		    	
-				    } else if (v == 'cancel'){
-				    	// 取消
-				    	top.$.jBox.tip("取消清除操作！", 'info');
-				    }
-				    return true;
-				};
-				tips="确定清除角色【${role.name}】下的已选人员？";
-				top.$.jBox.confirm(tips, "清除确认", submit);
-			});
-		</script>
-	</div>
 	<div id="assignRole" class="row-fluid span12">
 		<div class="span4" style="border-right: 1px solid #A8A8A8;">
 			<p>所在部门：</p>
