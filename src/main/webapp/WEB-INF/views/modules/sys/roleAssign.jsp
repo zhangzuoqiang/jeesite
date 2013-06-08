@@ -18,7 +18,8 @@
 		</div>
 		<div class="row-fluid span8">
 			<span class="span4">角色类型: ${role.roleType}</span>
-			<span class="span4">数据范围: ${role.dataScope}</span>
+			<c:set var="dictvalue" value="${role.dataScope}" scope="page" />
+			<span class="span4">数据范围: ${fns:getDictLabel(dictvalue, 'sys_data_scope', '')}</span>
 		</div>
 	</div>
 	<tags:message content="${message}"/>
